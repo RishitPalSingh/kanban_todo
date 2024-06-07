@@ -1,25 +1,45 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import TaskForm from './components/TaskForm';
+import KanbanBoard from './components/KanbanBoard';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem('tasks')) || []);
+
+  const addTask = (task) => {
+
+    const newTasks = [...tasks, task];
+    setTasks(newTasks);
+    localStorage.setItem('tasks', JSON.stringify(newTasks));
+  };
+
+  const updateTask = (updatedTask) => {
+    // console.log(updatedTask)
+    const newTasks = tasks.map(task => task.id === updatedTask.id ? updatedTask : task);
+    setTasks(newTasks);
+    localStorage.setItem('tasks', JSON.stringify(newTasks));
+  };
+
+  const deleteTask = (id) => {
+    console.log(id)
+    const newTasks = tasks.filter(task => task.id !== id);
+    setTasks(newTasks);
+    localStorage.setItem('tasks', JSON.stringify(newTasks));
+  };
+
+  const clearCompleted = () => {
+    const newTasks = tasks.filter(task => !task.completed);
+    setTasks(newTasks);
+    localStorage.setItem('tasks', JSON.stringify(newTasks));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Kanban To-Do List</h1>
+      <TaskForm addTask={addTask} />
+      <KanbanBoard tasks={tasks} updateTask={updateTask} deleteTask={deleteTask} clearCompleted={clearCompleted} />
     </div>
   );
-}
+};
 
 export default App;
